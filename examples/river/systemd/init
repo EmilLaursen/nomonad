@@ -1,0 +1,4 @@
+#!/bin/sh
+here=$(dirname "$(readlink -f "$0")")
+"$here/scope.sh" nomonad nomonad &
+exec "$here/scope.sh" river-helpers "$here/autostart.sh"

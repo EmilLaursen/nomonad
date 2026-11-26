@@ -1,0 +1,6 @@
+#!/bin/sh
+nm="${NOMONAD:-nomonad}"
+sel=$("$nm" -m list | awk -F'\t' '{ printf "%s\t%s\t%s  %s\n", $1, $2, $5, $6 }' |
+	rofi -dmenu -i -p window -display-columns 2,3 \
+		-display-column-separator '\t') || exit 0
+[ -n "$sel" ] && exec "$nm" -m "focus-window ${sel%%	*}"

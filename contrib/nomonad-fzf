@@ -1,0 +1,18 @@
+#!/bin/sh
+nm="${NOMONAD:-nomonad}"
+
+if [ "$1" = "--preview" ]; then
+	grim -T "$2" -s 0.5 - 2>/dev/null |
+		kitten icat --clear --transfer-mode=memory \
+			--unicode-placeholder --stdin=yes \
+			--place="${FZF_PREVIEW_COLUMNS}x${FZF_PREVIEW_LINES}@0x0" \
+			2>/dev/null || echo "no preview for $2"
+	exit 0
+fi
+
+sel=$("$nm" -m list |
+	awk -F'\t' '{ printf "%s\t%s\t%s\t%s\n", $1, $2, $5, $6 }' |
+	fzf --delimiter='\t' --with-nth=2,3,4 --prompt='window> ' \
+		--preview "$0 --preview {1}" --preview-window=right,60%) ||
+	exit 0
+[ -n "$sel" ] && exec "$nm" -m "focus-window ${sel%%	*}"
